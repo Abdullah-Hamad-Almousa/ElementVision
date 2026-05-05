@@ -3,6 +3,7 @@ import shutil
 from pathlib import Path
 from main import extract_ui_elements
 from element_classifier import ElementClassifier
+from text_validator import TextValidator
 
 
 def run_pipeline(image_path="UI-edited.jpg",
@@ -32,7 +33,15 @@ def run_pipeline(image_path="UI-edited.jpg",
     )
     result = classifier.run()
 
-    # --- Step 3: Cleanup after classification ---
+    # --- Step 3: Validate text entries ---
+    print("[Pipeline] Running TextValidator – checking 'text' entries ...")
+    validator = TextValidator(
+        element_dir=element_dir,
+        elements_json=json_path,
+    )
+    result = validator.run()
+
+    # --- Step 4: Cleanup after classification ---
     if element_path.exists():
         for child in element_path.iterdir():
             if child.is_file():
